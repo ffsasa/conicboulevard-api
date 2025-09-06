@@ -39,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
 
         repository.save(entity);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new BaseResponse<>("202", "Created", null));
+                .body(new BaseResponse<>("201", "Created", null));
     }
 }
 

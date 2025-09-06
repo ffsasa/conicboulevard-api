@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -34,8 +35,19 @@ public class SecurityConfig {
                                  "/api/account/login").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthEntryPoint()));
         return http.build();
+    }
+
+    //Trả lỗi cho Authen
+    @Bean
+    AuthenticationEntryPoint restAuthEntryPoint() {
+        return (req, res, ex) -> {
+            res.setStatus(401);
+            res.setContentType("application/json");
+            res.getWriter().write("{\"status\":401,\"message\":\"Unauthorized\"}");
+        };
     }
 
     @Bean

@@ -1,74 +1,58 @@
 package com.example.formapi.security;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.annotation.PostConstruct;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 
 @Component
-@RequiredArgsConstructor
 public class JwtTokenProvider {
+    private final UserDetailsService uds;
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private final Key key;
+    private final long expiry;
 
-    @Value("${jwt.expiration-ms}")
-    private long validityInMs;
-
-    private final UserDetailsService userDetailsService;
-
-    @PostConstruct
-    protected void init() {
-        // có thể mã hóa thêm secretKey nếu cần
-        secretKey = secretKey;
+    public JwtTokenProvider(
+            @Value("${jwt.secret}") String secretBase64,
+            @Value("${jwt.expiration-ms}") long expiry,
+            UserDetailsService uds
+    ) {
+        this.uds = uds;
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretBase64)); // >=256-bit
+        this.expiry = expiry;
     }
 
-    public String createToken(String username) {
-        Claims claims = Jwts.claims().setSubject(username);
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMs);
+    public String generateToken(String subject) {
+        var now = new Date();
+        var exp = new Date(now.getTime() + expiry);
         return Jwts.builder()
-                .setClaims(claims)
+                .setSubject(subject)
                 .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(exp)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    // Lấy username từ token
-    public String getUsername(String token) {
-        return Jwts.parser().setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
-            return false;
-        }
+        } catch (Exception e) { return false; }
     }
 
-    // Tạo Authentication từ token
     public Authentication getAuthentication(String token) {
-        String username = getUsername(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities()
-        );
+        String username = Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().getSubject();
+        var user = uds.loadUserByUsername(username);
+        return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
     }
 }
