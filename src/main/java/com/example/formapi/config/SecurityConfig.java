@@ -36,7 +36,14 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthEntryPoint()));
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(restAuthEntryPoint())
+                        .accessDeniedHandler((req, res, e) -> {
+                            res.setStatus(403);
+                            res.setContentType("application/json");
+                            res.getWriter().write("{\"status\":403,\"message\":\"Forbidden\"}");
+                        })
+                );
         return http.build();
     }
 
