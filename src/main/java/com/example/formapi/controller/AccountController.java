@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     @Autowired
-    private AccountService formService;
+    private AccountService accountService;
 
     @PostMapping("/register")
     public ResponseEntity<BaseResponse> create(@Valid @RequestBody AccountRequest request) {
-        return formService.create(request);
+        return accountService.create(request);
     }
 }

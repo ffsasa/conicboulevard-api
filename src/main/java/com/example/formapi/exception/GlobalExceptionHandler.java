@@ -18,18 +18,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatusCode status,
-            WebRequest request) {
-
-        List<String> errors = ex.getBindingResult().getFieldErrors().stream()
-                .map(FieldError::getDefaultMessage)
-                .toList();
-        // Nếu ApiError vẫn nhận HttpStatus, có thể ép về:
-        HttpStatus httpStatus = HttpStatus.valueOf(status.value());
-        ApiError apiError = new ApiError(httpStatus, "Validation Failed", errors);
-        return new ResponseEntity<>(apiError, httpStatus);
+            MethodArgumentNotValidException ex, HttpHeaders headers,
+            HttpStatusCode status, WebRequest request) {
+        var errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage).toList();
+        var body = new ApiError(HttpStatus.BAD_REQUEST, "Validation failed", errors);
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ExternalApiException.class)
