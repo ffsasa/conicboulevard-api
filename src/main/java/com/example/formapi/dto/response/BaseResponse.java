@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 @Data
 public class BaseResponse<T> {
-    private String status;
+    private int status;
     private String message;
     private T data;
 }

@@ -34,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
     public ResponseEntity<BaseResponse> create(RegisterRequest request) {
         if (repository.existsByEmailIgnoreCase(request.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new BaseResponse<>("409", "Email already in use", null));
+                    .body(new BaseResponse<>(409, "Email already in use", null));
         }
 
         Role role = roleRepository.findByName(RoleEnum.ADMIN);
@@ -51,7 +51,7 @@ public class AccountServiceImpl implements AccountService {
         response.setEmail(entity.getEmail());
         response.setName(entity.getName());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new BaseResponse<>("201", "Created", response));
+                .body(new BaseResponse<>(201, "Created", response));
     }
 
     @Override
@@ -61,10 +61,10 @@ public class AccountServiceImpl implements AccountService {
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             String token = jwtTokenProvider.generateToken(authentication.getName());
             LoginResponse loginResponse = new LoginResponse(token);
-            return ResponseEntity.ok(new BaseResponse<>("200", "Success", loginResponse));
+            return ResponseEntity.ok(new BaseResponse<>(200, "Success", loginResponse));
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new BaseResponse<>("401", "Invalid credentials", null));
+                    .body(new BaseResponse<>(401, "Invalid credentials", null));
         }
     }
 }

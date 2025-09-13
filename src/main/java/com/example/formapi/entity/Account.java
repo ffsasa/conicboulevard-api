@@ -18,12 +18,7 @@ public class Account extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, columnDefinition = "NVARCHAR(20)")
-    @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(
-            regexp = "^(0|\\+84)(\\d{9})$",
-            message = "Số điện thoại không hợp lệ (phải bắt đầu bằng 0 hoặc +84 và có 10 chữ số)"
-    )
+    @Column(nullable = false)
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)
