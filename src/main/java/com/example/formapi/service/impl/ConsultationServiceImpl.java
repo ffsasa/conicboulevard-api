@@ -24,7 +24,7 @@ public class ConsultationServiceImpl implements ConsultationService {
     private final ConsultationRepository repository;
     private final JavaMailSender mailSender;
 
-    private static final String TO_EMAIL = "thean123456asd@gmail.com";
+    private static final String TO_EMAIL = "ngocan2003krp@gmail.com";
 
     @Value("${spring.mail.username:}")
     private String fromEmail; // Nên trùng username khi dùng Gmail
