@@ -55,9 +55,11 @@ jobs:
         debug: true
         script: |
           cd ~/conicboulevard-api
-          # Pull image mới (latest)
+          # Pull image mới nhất
           docker-compose pull conicboulevard-api
-          # Restart dịch vụ BE (không đụng tới DB)
-          docker-compose up -d --no-deps conicboulevard-api
-          # Dọn image cũ (tùy chọn)
+          # Xoá container cũ nếu tồn tại
+          docker-compose rm -fs conicboulevard-api || true
+          # Tạo lại container BE từ image mới
+          docker-compose up -d conicboulevard-api
+          # (tuỳ chọn) dọn image cũ
           docker image prune -f
