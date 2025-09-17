@@ -5,6 +5,7 @@ import com.example.formapi.dto.request.RegisterRequest;
 import com.example.formapi.dto.response.BaseResponse;
 import com.example.formapi.dto.response.LoginResponse;
 import com.example.formapi.dto.response.RegisterResponse;
+import com.example.formapi.dto.response.UserResponse;
 import com.example.formapi.entity.Account;
 import com.example.formapi.entity.Role;
 import com.example.formapi.entity.RoleEnum;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +62,10 @@ public class AccountServiceImpl implements AccountService {
             var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             String token = jwtTokenProvider.generateToken(authentication.getName());
-            LoginResponse loginResponse = new LoginResponse(token);
+            var user = repository.findByEmailIgnoreCase(request.getEmail())
+                    .map( u -> new UserResponse(u.getEmail(), u.getName(), u.getRole().getName().toString()))
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            LoginResponse loginResponse = new LoginResponse(token, user);
             return ResponseEntity.ok(new BaseResponse<>(200, "Success", loginResponse));
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
