@@ -36,8 +36,14 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(request -> {
                 var corsConfiguration = new CorsConfiguration();
                 corsConfiguration.setAllowedHeaders(List.of("*"));
-                corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
                 corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                corsConfiguration.setAllowedOrigins(List.of(
+                        "http://localhost:5173",
+                        "https://conicboulevard.pro.vn",
+                        "https://www.conicboulevard.pro.vn",
+                        "https://conicboulevard.vercel.app"
+                ));
+                corsConfiguration.setAllowCredentials(true);
                 return corsConfiguration;
             }))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
