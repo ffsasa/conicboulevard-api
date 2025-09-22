@@ -18,7 +18,7 @@ public class ConsultationNotificationServiceImpl implements ConsultationNotifica
 
     private final JavaMailSender mailSender;
 
-    private static final String TO_EMAIL = "ngocan2003krp@gmail.com";
+    private static final String TO_EMAIL = "cuongcoach6879@gmail.com";
 
     @Value("${spring.mail.username:}")
     private String fromEmail;
