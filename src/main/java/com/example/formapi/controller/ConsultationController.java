@@ -33,6 +33,11 @@ public class ConsultationController {
         return consultationService.delete(id);
     }
 
+    @GetMapping("/api/consultation/health")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("OK");
+    }
+
     @GetMapping
     public ResponseEntity<BaseResponse<?>> getAll(@RequestParam String projectName, Pageable pageable) {
         return consultationService.getAll(projectName, pageable);
