@@ -33,7 +33,7 @@ public class ConsultationController {
         return consultationService.delete(id);
     }
 
-    @GetMapping("/api/consultation/health")
+    @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
         return ResponseEntity.ok("OK");
     }
