@@ -39,10 +39,11 @@ public class SecurityConfig {
                 corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 corsConfiguration.setAllowedOrigins(List.of(
                         "http://localhost:5173",
-                        "https://conicboulevard.pro.vn",
-                        "https://www.conicboulevard.pro.vn",
-                        "https://conicboulevard.vercel.app",
-                        "https://manager.conicboulevard.pro.vn"
+                        "https://conicboulevard.info",
+                        "https://www.conicboulevard.info",
+                        "https://conicboulevardv2.vercel.app",
+                        "https://manager.conicboulevard.info",
+                        "https://api.conicboulevard.info"
                 ));
                 corsConfiguration.setAllowCredentials(true);
                 return corsConfiguration;
