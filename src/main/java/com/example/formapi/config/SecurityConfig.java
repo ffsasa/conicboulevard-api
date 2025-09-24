@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/consultation").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/consultation/health").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/consultation").permitAll()
+                .requestMatchers(HttpMethod.HEAD, "/api/consultation").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
